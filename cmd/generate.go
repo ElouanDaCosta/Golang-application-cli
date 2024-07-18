@@ -62,10 +62,13 @@ func generateFromStructureFile(structureFile string) {
 		log.Fatalf("unable to change directory to %s, %v", config.ServiceName, err)
 	}
 
+	exec.Command("go", "mod", "init", config.ServiceName).Output()
+
 	for i := range config.Structure {
 		exec.Command("mkdir", config.Structure[i].Name).Output()
 	}
 
+	fmt.Printf("Microservice %s created successfully\n", config.ServiceName)
 }
 
 // pass the structure file to the flag without the extension
