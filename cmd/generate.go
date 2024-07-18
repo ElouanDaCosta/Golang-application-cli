@@ -6,10 +6,23 @@ package cmd
 import (
 	"fmt"
 	"log"
+	"os"
 	"os/exec"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
+
+type Config struct {
+	ServiceName string `mapstructure:"service_name"`
+	Port        int    `mapstructure:"port"`
+	Structure   []struct {
+		Name    string `mapstructure:"name"`
+		Content []struct {
+			Name string `mapstructure:"name"`
+		}
+	} `mapstructure:"structure"`
+}
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
@@ -34,7 +47,41 @@ to quickly create a Cobra application.`,
 }
 
 func generateFromStructureFile(structureFile string) {
-	fmt.Println(structureFile)
+	config := readStructureFile(structureFile)
+	newService := exec.Command("mkdir", config.ServiceName)
+	stdout, newServiceErr := newService.Output()
+
+	if newServiceErr != nil {
+		fmt.Println(newServiceErr.Error())
+		return
+	}
+
+	fmt.Println(stdout)
+
+	if err := os.Chdir(config.ServiceName); err != nil {
+		log.Fatalf("unable to change directory to %s, %v", config.ServiceName, err)
+	}
+
+	for i := range config.Structure {
+		exec.Command("mkdir", config.Structure[i].Name).Output()
+	}
+
+}
+
+// pass the structure file to the flag without the extension
+func readStructureFile(structureFile string) Config {
+	viper.SetConfigName(structureFile)
+	viper.AddConfigPath(".")
+	if err := viper.ReadInConfig(); err != nil {
+		return Config{}
+	}
+	var config Config
+	if err := viper.Unmarshal(&config); err != nil {
+		fmt.Println(err)
+		return Config{}
+	}
+	fmt.Println(config)
+	return config
 }
 
 func generateFromUserInput() {
@@ -64,5 +111,5 @@ func generateFromUserInput() {
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
-	generateCmd.PersistentFlags().String("structure-file", "", "Pass the structure file name and generate project structure from it.")
+	generateCmd.PersistentFlags().String("structure-file", "", "Pass the structure file name (default config.yaml)")
 }
