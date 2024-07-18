@@ -13,15 +13,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+type Folder struct {
+	Name       string   `mapstructure:"name"`
+	Subfolders []Folder `mapstructure:"subfolders"`
+}
+
 type Config struct {
-	ServiceName string `mapstructure:"service_name"`
-	Port        int    `mapstructure:"port"`
-	Structure   []struct {
-		Name    string `mapstructure:"name"`
-		Content []struct {
-			Name string `mapstructure:"name"`
-		}
-	} `mapstructure:"structure"`
+	ServiceName string   `mapstructure:"service_name"`
+	Port        int      `mapstructure:"port"`
+	Folders     []Folder `mapstructure:"folders"`
 }
 
 // generateCmd represents the generate command
@@ -40,8 +40,6 @@ to quickly create a Cobra application.`,
 
 		if structureFile != "" {
 			generateFromStructureFile(structureFile)
-		} else {
-			generateFromUserInput()
 		}
 	},
 }
@@ -62,13 +60,28 @@ func generateFromStructureFile(structureFile string) {
 		log.Fatalf("unable to change directory to %s, %v", config.ServiceName, err)
 	}
 
-	exec.Command("go", "mod", "init", config.ServiceName).Output()
+	runGoModInit(config.ServiceName)
 
-	for i := range config.Structure {
-		exec.Command("mkdir", config.Structure[i].Name).Output()
-	}
+	createFolders(".", config.Folders)
 
 	fmt.Printf("Microservice %s created successfully\n", config.ServiceName)
+}
+
+func runGoModInit(serviceName string) {
+	cmd := exec.Command("go", "mod", "init", serviceName)
+	if err := cmd.Run(); err != nil {
+		log.Fatalf("failed to run go mod init: %v", err)
+	}
+}
+
+func createFolders(basePath string, folders []Folder) {
+	for _, folder := range folders {
+		folderPath := fmt.Sprintf("%s/%s", basePath, folder.Name)
+		if err := os.Mkdir(folderPath, 0755); err != nil {
+			log.Fatalf("unable to create directory %s, %v", folderPath, err)
+		}
+		createFolders(folderPath, folder.Subfolders)
+	}
 }
 
 // pass the structure file to the flag without the extension
@@ -85,31 +98,6 @@ func readStructureFile(structureFile string) Config {
 	}
 	fmt.Println(config)
 	return config
-}
-
-func generateFromUserInput() {
-	fmt.Println("input text:")
-	var w1 string
-	n, err := fmt.Scanln(&w1)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("number of items read: %d\n", n)
-	fmt.Printf("read line: %s-\n", w1)
-
-	args0 := w1
-
-	cmd := exec.Command("mkdir", args0)
-	stdout, err := cmd.Output()
-
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
-	// Print the output
-	fmt.Println(string(stdout))
 }
 
 func init() {
