@@ -73,11 +73,11 @@ func generateFromStructureFile(appName string) {
 
 	appType := promptContent{
 		"Please select a package.",
-		fmt.Sprintf("Which package do you want your app to be based of ?"),
+		"Which package do you want your app to be based of ?",
 	}
 
 	newAppType := askUserForPackage(appType)
-	addPackageToApp(newAppType)
+	addPackageToApp(newAppType, appName)
 
 	fmt.Printf("Microservice %s created successfully\n", appName)
 }
@@ -142,9 +142,12 @@ func askUserForPackage(pc promptContent) string {
 	return result
 }
 
-func addPackageToApp(appType string) {
+func addPackageToApp(appType string, newAppBasePath string) {
 	fmt.Println("user choose :", appType)
-
+	if appType == "gin" {
+		os.Chdir(newAppBasePath)
+		exec.Command("go", "get", "-u", "github.com/gin-gonic/gin@latest").Output()
+	}
 }
 
 func init() {
