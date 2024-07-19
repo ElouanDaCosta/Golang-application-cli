@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -22,6 +23,11 @@ type Config struct {
 	ServiceName string   `mapstructure:"service_name"`
 	Port        int      `mapstructure:"port"`
 	Folders     []Folder `mapstructure:"folders"`
+}
+
+type promptContent struct {
+	errorMsg string
+	label    string
 }
 
 // generateCmd represents the generate command
@@ -65,6 +71,14 @@ func generateFromStructureFile(appName string) {
 
 	createFolders(".", config.Folders)
 
+	appType := promptContent{
+		"Please select a package.",
+		fmt.Sprintf("Which package do you want your app to be based of ?"),
+	}
+
+	newAppType := askUserForPackage(appType)
+	addPackageToApp(newAppType)
+
 	fmt.Printf("Microservice %s created successfully\n", appName)
 }
 
@@ -97,6 +111,40 @@ func readStructureFile() Config {
 	}
 	fmt.Println(config)
 	return config
+}
+
+func askUserForPackage(pc promptContent) string {
+	items := []string{"gin", "gRPC", "basic http"}
+	index := -1
+	var result string
+	var err error
+
+	for index < 0 {
+		prompt := promptui.SelectWithAdd{
+			Label: pc.label,
+			Items: items,
+		}
+
+		index, result, err = prompt.Run()
+
+		if index == -1 {
+			items = append(items, result)
+		}
+	}
+
+	if err != nil {
+		fmt.Printf("Prompt failed %v\n", err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("Input: %s\n", result)
+
+	return result
+}
+
+func addPackageToApp(appType string) {
+	fmt.Println("user choose :", appType)
+
 }
 
 func init() {
