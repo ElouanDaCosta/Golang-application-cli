@@ -77,9 +77,7 @@ func runGoModInit(serviceName string) {
 func createFolders(basePath string, folders []Folder) {
 	for _, folder := range folders {
 		folderPath := fmt.Sprintf("%s/%s", basePath, folder.Name)
-		if err := os.Mkdir(folderPath, 0755); err != nil {
-			log.Fatalf("unable to create directory %s, %v", folderPath, err)
-		}
+		os.Mkdir(folder.Name, 0755)
 		createFolders(folderPath, folder.Subfolders)
 	}
 }
