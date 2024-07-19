@@ -144,9 +144,12 @@ func askUserForPackage(pc promptContent) string {
 
 func addPackageToApp(appType string, newAppBasePath string) {
 	fmt.Println("user choose :", appType)
+	os.Chdir(newAppBasePath)
 	if appType == "gin" {
-		os.Chdir(newAppBasePath)
 		exec.Command("go", "get", "-u", "github.com/gin-gonic/gin@latest").Output()
+	}
+	if appType == "gRPC" {
+		exec.Command("go", "get", "-u", "google.golang.org/grpc").Output()
 	}
 }
 
