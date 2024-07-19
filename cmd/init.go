@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -145,11 +146,23 @@ func askUserForPackage(pc promptContent) string {
 func addPackageToApp(appType string, newAppBasePath string) {
 	fmt.Println("user choose :", appType)
 	os.Chdir(newAppBasePath)
+	exec.Command("touch", "main.go").Output()
 	if appType == "gin" {
 		exec.Command("go", "get", "-u", "github.com/gin-gonic/gin@latest").Output()
+		writeInMainGo(newAppBasePath)
 	}
 	if appType == "gRPC" {
 		exec.Command("go", "get", "-u", "google.golang.org/grpc").Output()
+	}
+}
+
+func writeInMainGo(basePath string) {
+	// Write the string to the file
+	os.Chdir(basePath)
+	err := ioutil.WriteFile("main.go", []byte("Hello, world!"), 0644)
+	if err != nil {
+		fmt.Println("Failed to write to file:", err) //print the failed message
+		return
 	}
 }
 
