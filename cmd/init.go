@@ -40,7 +40,7 @@ to quickly create a Cobra application.`,
 		if appName != "" {
 			generateFromStructureFile(appName)
 		} else {
-			fmt.Println("Enter a name for your app.")
+			generateFromStructureFile("new_app")
 		}
 	},
 }
@@ -101,5 +101,5 @@ func readStructureFile() Config {
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
-	generateCmd.PersistentFlags().String("name", "", "Pass the structure file name (default config.yaml)")
+	generateCmd.PersistentFlags().String("name", "", "Generate an app with the given name (default new_app)")
 }
