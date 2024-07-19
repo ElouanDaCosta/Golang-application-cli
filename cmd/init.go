@@ -26,8 +26,8 @@ type Config struct {
 
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
-	Use:   "generate",
-	Short: "Generate microservice structure",
+	Use:   "init",
+	Short: "Initialize a microservice app",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -35,18 +35,19 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("generate called")
-		structureFile, _ := cmd.Flags().GetString("structure-file")
+		appName, _ := cmd.Flags().GetString("name")
 
-		if structureFile != "" {
-			generateFromStructureFile(structureFile)
+		if appName != "" {
+			generateFromStructureFile(appName)
+		} else {
+			fmt.Println("Enter a name for your app.")
 		}
 	},
 }
 
-func generateFromStructureFile(structureFile string) {
-	config := readStructureFile(structureFile)
-	newService := exec.Command("mkdir", config.ServiceName)
+func generateFromStructureFile(appName string) {
+	config := readStructureFile()
+	newService := exec.Command("mkdir", appName)
 	stdout, newServiceErr := newService.Output()
 
 	if newServiceErr != nil {
@@ -56,15 +57,15 @@ func generateFromStructureFile(structureFile string) {
 
 	fmt.Println(stdout)
 
-	if err := os.Chdir(config.ServiceName); err != nil {
-		log.Fatalf("unable to change directory to %s, %v", config.ServiceName, err)
+	if err := os.Chdir(appName); err != nil {
+		log.Fatalf("unable to change directory to %s, %v", appName, err)
 	}
 
-	runGoModInit(config.ServiceName)
+	runGoModInit(appName)
 
 	createFolders(".", config.Folders)
 
-	fmt.Printf("Microservice %s created successfully\n", config.ServiceName)
+	fmt.Printf("Microservice %s created successfully\n", appName)
 }
 
 func runGoModInit(serviceName string) {
@@ -83,8 +84,8 @@ func createFolders(basePath string, folders []Folder) {
 }
 
 // pass the structure file to the flag without the extension
-func readStructureFile(structureFile string) Config {
-	viper.SetConfigName(structureFile)
+func readStructureFile() Config {
+	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	if err := viper.ReadInConfig(); err != nil {
 		return Config{}
@@ -100,5 +101,5 @@ func readStructureFile(structureFile string) Config {
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
-	generateCmd.PersistentFlags().String("structure-file", "", "Pass the structure file name (default config.yaml)")
+	generateCmd.PersistentFlags().String("name", "", "Pass the structure file name (default config.yaml)")
 }
