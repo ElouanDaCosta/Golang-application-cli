@@ -21,3 +21,6 @@ bin
 # Go workspace file
 go.work
 go.work.sum
+
+# Storage for txt files where the application is storing data
+storage/
