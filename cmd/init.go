@@ -168,11 +168,11 @@ func writeInMainGo(basePath string) {
 	writer.WriteString("package main\n\n")
 	writer.WriteString(`import "github.com/gin-gonic/gin"`)
 	writer.WriteString("\n\nfunc main() {\n")
-	writer.WriteString("r := gin.Default()\n")
-	writer.WriteString(`r.GET("/ping", func(c *gin.Context) {`)
-	writer.WriteString("\nc.JSON(200, gin.H{\n")
-	writer.WriteString(`"message": "pong",`)
-	writer.WriteString("\n})\n})\nr.Run()\n}\n")
+	writer.WriteString("\tr := gin.Default()\n")
+	writer.WriteString(`  r.GET("/ping", func(c *gin.Context) {`)
+	writer.WriteString("\n\t\tc.JSON(200, gin.H{\n")
+	writer.WriteString(`      "message": "pong",`)
+	writer.WriteString("\n\t\t})\n\t})\n\tr.Run()\n}\n")
 
 	writer.Flush()
 }
