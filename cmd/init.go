@@ -4,8 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"bufio"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -159,11 +159,22 @@ func addPackageToApp(appType string, newAppBasePath string) {
 func writeInMainGo(basePath string) {
 	// Write the string to the file
 	os.Chdir(basePath)
-	err := ioutil.WriteFile("main.go", []byte("Hello, world!"), 0644)
+	f, err := os.OpenFile("main.go", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
-		fmt.Println("Failed to write to file:", err) //print the failed message
 		return
 	}
+	writer := bufio.NewWriter(f)
+
+	writer.WriteString("package main\n\n")
+	writer.WriteString(`import "github.com/gin-gonic/gin"`)
+	writer.WriteString("\n\nfunc main() {\n")
+	writer.WriteString("r := gin.Default()\n")
+	writer.WriteString(`r.GET("/ping", func(c *gin.Context) {`)
+	writer.WriteString("\nc.JSON(200, gin.H{\n")
+	writer.WriteString(`"message": "pong",`)
+	writer.WriteString("\n})\n})\nr.Run()\n}\n")
+
+	writer.Flush()
 }
 
 func init() {
