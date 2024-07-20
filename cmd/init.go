@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
@@ -79,6 +80,8 @@ func generateFromStructureFile(appName string) {
 
 	newAppType := askUserForPackage(appType)
 	addPackageToApp(newAppType, appName)
+
+	writeInSaveAppFile(appName, "../storage")
 
 	fmt.Printf("Microservice %s created successfully\n", appName)
 }
@@ -154,6 +157,29 @@ func addPackageToApp(appType string, newAppBasePath string) {
 	if appType == "gRPC" {
 		exec.Command("go", "get", "-u", "google.golang.org/grpc").Output()
 	}
+}
+
+func writeInSaveAppFile(appName string, basePath string) {
+	os.Chdir(basePath)
+	f, err := os.OpenFile("app.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = f.Write([]byte(appName + "\n"))
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	absolutePathApp, err := filepath.Abs("../" + appName)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	f.Write([]byte(absolutePathApp + "\n\n"))
+
+	f.Close()
 }
 
 func writeInMainGo(basePath string) {
