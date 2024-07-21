@@ -4,6 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -28,8 +29,12 @@ to quickly create a Cobra application.`,
 func listAllApp() {
 	os.Chdir("./storage")
 	f, _ := os.ReadFile("app.txt")
-	getAppData(f)
+	fmt.Println(string(f))
 }
+
+// func getOneApp() {
+
+// }
 
 func getAppData(appFile []byte) []string {
 	appData := string(appFile)
