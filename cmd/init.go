@@ -166,7 +166,7 @@ func writeInSaveAppFile(appName string, basePath string) {
 		log.Fatal(err)
 	}
 
-	_, err = f.Write([]byte(appName + "\n"))
+	_, err = f.Write([]byte("name: " + appName + "\n"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -177,7 +177,7 @@ func writeInSaveAppFile(appName string, basePath string) {
 		log.Fatal(err)
 	}
 
-	f.Write([]byte(absolutePathApp + "\n\n"))
+	f.Write([]byte("app path: " + absolutePathApp + "\n\n"))
 
 	f.Close()
 }
