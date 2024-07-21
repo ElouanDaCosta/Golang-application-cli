@@ -4,7 +4,8 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"os/exec"
+	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -25,7 +26,19 @@ to quickly create a Cobra application.`,
 }
 
 func listAllApp() {
-	exec.Command("cat", "../storage/*")
+	os.Chdir("./storage")
+	f, _ := os.ReadFile("app.txt")
+	getAppData(f)
+}
+
+func getAppData(appFile []byte) []string {
+	appData := string(appFile)
+	var outpout []string
+	appDataArray := strings.Split(appData, "\n")
+	name := strings.Split(appDataArray[0], "name: ")
+	path := strings.Split(appDataArray[1], "app path: ")
+	outpout = append(outpout, name[1], path[1])
+	return outpout
 }
 
 func init() {
