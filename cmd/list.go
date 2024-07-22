@@ -15,8 +15,8 @@ import (
 // getCmd represents the get command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List generated app.",
-	Long:  `List all generated app or one app by name.`,
+	Short: "List generated application.",
+	Long:  `List all generated application or one application by name.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		appName, _ := cmd.Flags().GetString("name")
 

@@ -35,8 +35,8 @@ type promptContent struct {
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
 	Use:   "init",
-	Short: "Initialize a microservice app",
-	Long:  `Initialize a microservice app using the specified technology between gin, gRPC or just basic http.`,
+	Short: "Initialize a golang application.",
+	Long:  `Initialize a golang application using the specified technology between gin, gRPC or just basic http.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		appName, _ := cmd.Flags().GetString("name")
 
