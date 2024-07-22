@@ -51,8 +51,8 @@ func getOneApp(appName string) {
 	outpout := strings.Split(string(f), "\n")
 	for i := range outpout {
 		if outpout[i] == "name: "+appName {
-
-			fmt.Println(outpout[i], "\n", outpout[i+1])
+			fmt.Println(outpout[i])
+			fmt.Println(outpout[i+1])
 		}
 	}
 }
