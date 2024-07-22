@@ -17,9 +17,12 @@ var upgradeCmd = &cobra.Command{
 	Short: "Upgrade the go version of the specified application.",
 	Long: `Upgrade a single application go version or a specified package version or update all applications go version or package. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+go-app-cli upgrade --name new_app --newversion 1.23
+
+go-app-cli upgrade --newversion 1.23 --all-application
+
+go-app-cli upgrade --newversion 1.23 -a
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 		name, _ := cmd.Flags().GetString("name")
 		newVersion, _ := cmd.Flags().GetString("newversion")
