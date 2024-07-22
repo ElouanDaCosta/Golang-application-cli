@@ -57,16 +57,6 @@ func getOneApp(appName string) {
 	}
 }
 
-func getAppData(appFile []byte) []string {
-	appData := string(appFile)
-	var outpout []string
-	appDataArray := strings.Split(appData, "\n")
-	name := strings.Split(appDataArray[0], "name: ")
-	path := strings.Split(appDataArray[1], "app path: ")
-	outpout = append(outpout, name[1], path[1])
-	return outpout
-}
-
 func init() {
 	rootCmd.AddCommand(listCmd)
 	listCmd.PersistentFlags().String("name", "", "Return the app with the given name (default new_app)")
