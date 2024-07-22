@@ -5,6 +5,9 @@ package cmd
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -20,8 +23,28 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("upgrade called")
+		appName, _ := cmd.Flags().GetString("name")
+
+		if appName != "" {
+			getAppPath(appName)
+		} else {
+			getAppPath("new_app")
+		}
 	},
+}
+
+func getAppPath(appName string) {
+	os.Chdir("./storage")
+	f, err := os.ReadFile("app.txt")
+	if err != nil {
+		log.Println(err)
+	}
+	outpout := strings.Split(string(f), "\n")
+	for i := range outpout {
+		if outpout[i] == "name: "+appName {
+			fmt.Println(outpout[i+1])
+		}
+	}
 }
 
 func init() {
@@ -35,5 +58,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// upgradeVersionCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	upgradeCmd.PersistentFlags().String("name", "", "name of the app")
 }
