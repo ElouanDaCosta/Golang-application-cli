@@ -1,9 +1,0 @@
-service_name: my_service
-port: 8080
-structure:
-  - name: my_module
-  - content:
-    - name: my_submodule
-  - name: my_other_module
-  - content:
-    - name: my_other_submodule
