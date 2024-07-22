@@ -23,18 +23,21 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		name, _ := cmd.Flags().GetString("name")
 		newVersion, _ := cmd.Flags().GetString("newversion")
+		allApp, _ := cmd.Flags().GetBool("all")
 
 		if name != "" && newVersion != "" {
 			appPath := getAppPath(name)
-			bumpGoVersion(appPath, newVersion)
-		} else {
-			// appPath := getAllPath()
-			// bumpGoVersion(appPath)
+			bumpOneGoVersion(appPath, newVersion)
+		} else if newVersion != "" && allApp {
+			appPath := getAllPath()
+			bumpAllGoVersion(appPath, newVersion)
+		} else if newVersion != "" && !allApp {
+			log.Println("Use the all flag or specified an application name")
 		}
 	},
 }
 
-func bumpGoVersion(appPath string, newVersion string) {
+func bumpOneGoVersion(appPath string, newVersion string) {
 	path := strings.Split(appPath, "app path: ")
 	os.Chdir(path[1])
 	f, err := os.ReadFile("go.mod")
@@ -52,6 +55,12 @@ func bumpGoVersion(appPath string, newVersion string) {
 		log.Fatalln(err)
 	} else {
 		log.Println("Go version of the application upgraded successfully.")
+	}
+}
+
+func bumpAllGoVersion(appPath []string, newVersion string) {
+	for i := range appPath {
+		bumpOneGoVersion(appPath[i], newVersion)
 	}
 }
 
@@ -99,4 +108,5 @@ func init() {
 	// is called directly, e.g.:
 	upgradeCmd.PersistentFlags().String("newversion", "", "new version of the app")
 	upgradeCmd.PersistentFlags().String("name", "", "name of the application")
+	upgradeCmd.Flags().BoolP("all", "o", false, "Select all application")
 }
