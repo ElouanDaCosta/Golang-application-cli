@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -22,19 +23,39 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		listAllApp()
+		appName, _ := cmd.Flags().GetString("name")
+
+		if appName != "" {
+			getOneApp(appName)
+		} else {
+			listAllApp()
+		}
 	},
 }
 
 func listAllApp() {
 	os.Chdir("./storage")
-	f, _ := os.ReadFile("app.txt")
+	f, err := os.ReadFile("app.txt")
+	if err != nil {
+		log.Println(err)
+	}
 	fmt.Println(string(f))
 }
 
-// func getOneApp() {
+func getOneApp(appName string) {
+	os.Chdir("./storage")
+	f, err := os.ReadFile("app.txt")
+	if err != nil {
+		log.Println(err)
+	}
+	outpout := strings.Split(string(f), "\n")
+	for i := range outpout {
+		if outpout[i] == "name: "+appName {
 
-// }
+			fmt.Println(outpout[i], "\n", outpout[i+1])
+		}
+	}
+}
 
 func getAppData(appFile []byte) []string {
 	appData := string(appFile)
@@ -48,5 +69,5 @@ func getAppData(appFile []byte) []string {
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-
+	listCmd.PersistentFlags().String("name", "", "Return the app with the given name (default new_app)")
 }
