@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Elouan DA COSTA PEIXOTO elouandacostapeixoto#gmail.com
 */
 package cmd
 
@@ -28,12 +28,30 @@ to quickly create a Cobra application.`,
 		if appName != "" {
 			getAppPath(appName)
 		} else {
-			getAppPath("new_app")
+			// getAppPath("new_app")
+			getAllPath()
 		}
 	},
 }
 
-func getAppPath(appName string) {
+func getAllPath() []string {
+	var outpout []string
+	os.Chdir("./storage")
+	f, err := os.ReadFile("app.txt")
+	if err != nil {
+		log.Println(err)
+	}
+	fileSplit := strings.Split(string(f), "\n")
+	for _, value := range fileSplit {
+		if strings.HasPrefix(value, "app path: ") {
+			fmt.Println(value)
+			outpout = append(outpout, value)
+		}
+	}
+	return outpout
+}
+
+func getAppPath(appName string) string {
 	os.Chdir("./storage")
 	f, err := os.ReadFile("app.txt")
 	if err != nil {
@@ -43,8 +61,10 @@ func getAppPath(appName string) {
 	for i := range outpout {
 		if outpout[i] == "name: "+appName {
 			fmt.Println(outpout[i+1])
+			return outpout[i+1]
 		}
 	}
+	return ""
 }
 
 func init() {
