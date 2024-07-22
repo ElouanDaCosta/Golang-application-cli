@@ -4,7 +4,6 @@ Copyright © 2024 Elouan DA COSTA PEIXOTO elouandacostapeixoto#gmail.com
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -16,22 +15,44 @@ import (
 var upgradeCmd = &cobra.Command{
 	Use:   "upgrade",
 	Short: "Upgrade the go version of the specified application.",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Long: `Upgrade a single application go version or a specified package version or update all applications go version or package. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		appName, _ := cmd.Flags().GetString("name")
+		name, _ := cmd.Flags().GetString("name")
+		newVersion, _ := cmd.Flags().GetString("newversion")
 
-		if appName != "" {
-			getAppPath(appName)
+		if name != "" && newVersion != "" {
+			appPath := getAppPath(name)
+			bumpGoVersion(appPath, newVersion)
 		} else {
-			// getAppPath("new_app")
-			getAllPath()
+			// appPath := getAllPath()
+			// bumpGoVersion(appPath)
 		}
 	},
+}
+
+func bumpGoVersion(appPath string, newVersion string) {
+	path := strings.Split(appPath, "app path: ")
+	os.Chdir(path[1])
+	f, err := os.ReadFile("go.mod")
+	if err != nil {
+		log.Println(err)
+	}
+
+	lines := strings.Split(string(f), "\n")
+
+	lines[2] = "go " + newVersion
+
+	output := strings.Join(lines, "\n")
+	err = os.WriteFile("go.mod", []byte(output), 0644)
+	if err != nil {
+		log.Fatalln(err)
+	} else {
+		log.Println("Go version of the application upgraded successfully.")
+	}
 }
 
 func getAllPath() []string {
@@ -44,7 +65,6 @@ func getAllPath() []string {
 	fileSplit := strings.Split(string(f), "\n")
 	for _, value := range fileSplit {
 		if strings.HasPrefix(value, "app path: ") {
-			fmt.Println(value)
 			outpout = append(outpout, value)
 		}
 	}
@@ -60,7 +80,6 @@ func getAppPath(appName string) string {
 	outpout := strings.Split(string(f), "\n")
 	for i := range outpout {
 		if outpout[i] == "name: "+appName {
-			fmt.Println(outpout[i+1])
 			return outpout[i+1]
 		}
 	}
@@ -78,5 +97,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	upgradeCmd.PersistentFlags().String("name", "", "name of the app")
+	upgradeCmd.PersistentFlags().String("newversion", "", "new version of the app")
+	upgradeCmd.PersistentFlags().String("name", "", "name of the application")
 }
