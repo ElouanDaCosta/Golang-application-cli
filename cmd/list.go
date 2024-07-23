@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 Elouan DA COSTA PEIXOTO elouandacostapeixoto#gmail.com
+Copyright © 2024 Elouan DA COSTA PEIXOTO elouandacostapeixoto@gmail.com
 */
 package cmd
 
