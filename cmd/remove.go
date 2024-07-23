@@ -29,7 +29,7 @@ to quickly create a Cobra application.`,
 		if appName != "" {
 			removeFromStorage(appName)
 		} else {
-			listAllApp()
+			log.Println("Please refer an application name.")
 		}
 	},
 }
@@ -40,6 +40,7 @@ func removeFromStorage(appName string) {
 	filePath := "app.txt"
 	targetLine := appName
 
+	// read the app storage file
 	content, err := os.ReadFile(filePath)
 	if err != nil {
 		log.Fatalf("unable to read file: %v", err)
@@ -47,7 +48,12 @@ func removeFromStorage(appName string) {
 
 	lines := strings.Split(string(content), "\n")
 
-	index := 0
+	// this code snippet is iterating over each line in the `lines` slice, which contains the content of a
+	// file read earlier. For each line, it checks if the line matches the pattern `"name: "+targetLine`.
+	// If a match is found, it assigns the index of that line to the `index` variable and breaks out of
+	// the loop.
+	// start the index at -1 to cover all the file.
+	index := -1
 	for i, line := range lines {
 		if line == "name: "+targetLine {
 			index = i
@@ -55,11 +61,13 @@ func removeFromStorage(appName string) {
 		}
 	}
 
-	if index == 0 {
+	if index == -1 {
 		fmt.Println("Line not found")
 		return
 	}
 
+	// this block of code is responsible for creating a new slice of strings called `newLines` that will
+	// contain the updated content of the file after removing a specific line
 	var newLines []string
 	if index < len(lines)-1 {
 		newLines = append(lines[:index], lines[index+2:]...)
@@ -67,6 +75,8 @@ func removeFromStorage(appName string) {
 		newLines = lines[:index]
 	}
 
+	// this block of code is responsible for updating the content of the file after removing a specific
+	// line.
 	output := strings.Join(newLines, "\n")
 	err = os.WriteFile(filePath, []byte(output), 0644)
 	if err != nil {
