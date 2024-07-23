@@ -32,7 +32,7 @@ go-app-cli remove --clear-storage
 
 		if appName != "" {
 			if removeApp {
-				log.Println("remove app called")
+				deleteApp(appName)
 			} else {
 				removeFromStorage(appName)
 			}
@@ -120,6 +120,36 @@ func cleanAllStorage() {
 	f.Truncate(0)
 	f.Seek(0, 0)
 	buf.WriteTo(f)
+}
+
+func deleteApp(appName string) {
+	os.Chdir(".")
+	fmt.Println("Are you sure to delete the app?(y/n)")
+	reader := bufio.NewReader(os.Stdin)
+	char, _, err := reader.ReadRune()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if char == 'y' {
+		removeContentDirectory(appName)
+		removeFromStorage(appName)
+		err := os.Remove(appName)
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Directory", appName, "removed successfully")
+		}
+	}
+}
+
+func removeContentDirectory(appName string) {
+	os.Chdir(".")
+	err := os.RemoveAll(appName)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("Content in", appName, "removed successfully")
+	}
 }
 
 func init() {
