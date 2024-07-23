@@ -27,15 +27,23 @@ go-app-cli remove --clear-storage
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		appName, _ := cmd.Flags().GetString("name")
-		clearAllApp, _ := cmd.Flags().GetBool("clear-storage")
+		clearAllApp, _ := cmd.Flags().GetBool("prune")
+		removeApp, _ := cmd.Flags().GetBool("remove-app")
+
 		if appName != "" {
-			removeFromStorage(appName)
-		} else if appName == "" && !clearAllApp {
+			if removeApp {
+				log.Println("remove app called")
+			} else {
+				removeFromStorage(appName)
+			}
+			return
+		}
+		if removeApp {
+			log.Println("Please refer an application name to remove.")
+		} else if !clearAllApp {
 			log.Println("Please refer an application name.")
-		} else if appName == "" && clearAllApp {
-			cleanAllStorage()
 		} else {
-			log.Println("Please refer a flag to use the remove command.")
+			cleanAllStorage()
 		}
 	},
 }
@@ -127,5 +135,6 @@ func init() {
 	// is called directly, e.g.:
 	// removeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	removeCmd.PersistentFlags().String("name", "", "Clear the given application from the saved application storage")
-	removeCmd.Flags().BoolP("clear-storage", "c", false, "Clear all the storage from the saved application.")
+	removeCmd.Flags().BoolP("prune", "p", false, "Clear all the storage from the saved application.")
+	removeCmd.Flags().BoolP("remove-app", "r", false, "Delete the working directory of the given application. Not reversible !")
 }
