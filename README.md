@@ -18,7 +18,7 @@ go build -o <APP_NAME>
 Create a new application using the following command.
 
 ```bash
-./<APP_NAME> init --name=<YOUR_APP_NAME>
+./<APP_NAME> init --name <YOUR_APP_NAME>
 ```
 
 List all the applications using the following command.
@@ -30,5 +30,5 @@ List all the applications using the following command.
 List a specific application using the following command.
 
 ```bash
-./<APP_NAME> list --name=<YOUR_APP_NAME>
+./<APP_NAME> list --name <YOUR_APP_NAME>
 ```

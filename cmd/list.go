@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 Elouan DA COSTA PEIXOTO elouandacostapeixoto@gmail.com
 */
 package cmd
 
