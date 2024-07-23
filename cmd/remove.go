@@ -133,23 +133,44 @@ func deleteApp(appName string) {
 	if char == 'y' {
 		removeContentDirectory(appName)
 		removeFromStorage(appName)
-		err := os.Remove(appName)
+		os.Remove(appName)
 		if err != nil {
 			fmt.Println(err)
-		} else {
-			fmt.Println("Directory", appName, "removed successfully")
 		}
+	} else if char == 'n' {
+		fmt.Println("Action canceled")
+	} else {
+		deleteApp(appName)
 	}
 }
 
 func removeContentDirectory(appName string) {
 	os.Chdir(".")
-	err := os.RemoveAll(appName)
+	exist, err := directoryExist(appName)
 	if err != nil {
+		fmt.Println(err)
+	}
+	if !exist {
+		fmt.Println(appName + " no such file or directory")
+		return
+	}
+	remove := os.RemoveAll(appName)
+	if remove != nil {
 		fmt.Println(err)
 	} else {
 		fmt.Println("Content in", appName, "removed successfully")
 	}
+}
+
+func directoryExist(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
 }
 
 func init() {
