@@ -18,18 +18,24 @@ import (
 var removeCmd = &cobra.Command{
 	Use:   "remove",
 	Short: "Remove an application from the storage",
-	Long: `Remove an application from the storage or remove an application with the rf flag. For example:
+	Long: `Remove an application from the storage, 
+	clear completely the storage where all the application is saved
+	or remove an application with the rf flag. For example:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+go-app-cli remove --name new_app
+go-app-cli remove --clear-storage
+`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("remove called")
 		appName, _ := cmd.Flags().GetString("name")
+		clearAllApp, _ := cmd.Flags().GetBool("clear-storage")
 		if appName != "" {
 			removeFromStorage(appName)
-		} else {
+		} else if appName == "" && !clearAllApp {
 			log.Println("Please refer an application name.")
+		} else if appName == "" && clearAllApp {
+			cleanAllStorage()
+		} else {
+			log.Println("Please refer a flag to use the remove command.")
 		}
 	},
 }
@@ -97,10 +103,8 @@ func cleanAllStorage() {
 	var bs []byte
 	buf := bytes.NewBuffer(bs)
 
-	var text string
 	for scanner.Scan() {
-		text = scanner.Text()
-		_, err := buf.WriteString(text + "\n")
+		_, err := buf.WriteString("")
 		if err != nil {
 			panic("Couldn't replace line")
 		}
@@ -122,5 +126,6 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// removeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	removeCmd.PersistentFlags().String("name", "", "Return the app with the given name (default new_app)")
+	removeCmd.PersistentFlags().String("name", "", "Clear the given application from the saved application storage")
+	removeCmd.Flags().BoolP("clear-storage", "c", false, "Clear all the storage from the saved application.")
 }
