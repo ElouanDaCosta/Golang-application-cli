@@ -23,7 +23,8 @@ var removeCmd = &cobra.Command{
 	or remove an application with the rf flag. For example:
 
 go-app-cli remove --name new_app
-go-app-cli remove --clear-storage
+go-app-cli remove --prune
+go-app-cli remove --remove-app --name new_app
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		appName, _ := cmd.Flags().GetString("name")
