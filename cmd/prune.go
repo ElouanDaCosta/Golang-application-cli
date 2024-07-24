@@ -16,20 +16,20 @@ import (
 
 // removeCmd represents the remove command
 var removeCmd = &cobra.Command{
-	Use:   "remove",
+	Use:   "prune",
 	Short: "Remove an application from the storage",
 	Long: `Remove an application from the storage,
 clear completely the storage where all the application is saved 
 or remove an application with the remove-app flag. For example:
 
-go-app-cli remove --name new_app
-go-app-cli remove --prune
-go-app-cli remove --remove-app --name new_app
+go-app-cli prune --name new_app
+go-app-cli prune --all
+go-app-cli prune --app --name new_app
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		appName, _ := cmd.Flags().GetString("name")
-		clearAllApp, _ := cmd.Flags().GetBool("prune")
-		removeApp, _ := cmd.Flags().GetBool("remove-app")
+		clearAllApp, _ := cmd.Flags().GetBool("all")
+		removeApp, _ := cmd.Flags().GetBool("app")
 
 		if appName != "" {
 			if removeApp {
@@ -187,6 +187,6 @@ func init() {
 	// is called directly, e.g.:
 	// removeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	removeCmd.PersistentFlags().String("name", "", "Clear the given application from the saved application storage")
-	removeCmd.Flags().BoolP("prune", "p", false, "Clear all the storage from the saved application.")
-	removeCmd.Flags().BoolP("remove-app", "r", false, "Delete the working directory of the given application. Not reversible !")
+	removeCmd.Flags().BoolP("all", "a", false, "Clear all the storage from the saved application.")
+	removeCmd.Flags().BoolP("app", "r", false, "Delete the working directory of the given application. Not reversible !")
 }
