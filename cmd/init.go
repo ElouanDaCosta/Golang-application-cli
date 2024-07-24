@@ -24,7 +24,6 @@ type Folder struct {
 
 type Config struct {
 	ServiceName string   `mapstructure:"service_name"`
-	Port        int      `mapstructure:"port"`
 	Folders     []Folder `mapstructure:"folders"`
 }
 
@@ -58,7 +57,7 @@ func generateFromStructureFile(appName string) {
 	stdout, newServiceErr := newService.Output()
 
 	if newServiceErr != nil {
-		fmt.Println(newServiceErr.Error())
+		fmt.Println("Error creating the directory:", newServiceErr.Error())
 		return
 	}
 
@@ -210,11 +209,11 @@ func writeMainGo(basePath string, appType string) {
 
 	switch appType {
 	case "gin":
-		content = fmt.Sprintf(templates.RenderGinTemplate())
+		content = fmt.Sprintf("%v", templates.RenderGinTemplate())
 	case "gRPC":
-		content = fmt.Sprintf(templates.RenderGrpcTemplate())
+		content = fmt.Sprintf("%v", templates.RenderGrpcTemplate())
 	case "basic http":
-		content = fmt.Sprintf(templates.RenderHttpTemplate())
+		content = fmt.Sprintf("%v", templates.RenderHttpTemplate())
 	}
 
 	_, err = f.WriteString(content)
