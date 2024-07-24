@@ -4,6 +4,7 @@ Copyright © 2024 Elouan DA COSTA PEIXOTO elouandacostapeixoto@gmail.com
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -28,14 +29,24 @@ go-app-cli upgrade --newversion [version_wanted] -a
 		newVersion, _ := cmd.Flags().GetString("newversion")
 		allApp, _ := cmd.Flags().GetBool("all")
 
-		if name != "" && newVersion != "" {
-			appPath := getAppPath(name)
-			bumpOneGoVersion(appPath, newVersion)
-		} else if newVersion != "" && allApp {
-			appPath := getAllPath()
-			bumpAllGoVersion(appPath, newVersion)
-		} else if newVersion != "" && !allApp {
-			log.Println("Use the all flag or specified an application name")
+		if name != "" {
+			if newVersion != "" {
+				appPath := getAppPath(name)
+				bumpOneGoVersion(appPath, newVersion)
+			} else {
+				fmt.Println("Please refer a new version for your application")
+			}
+			return
+		}
+		if newVersion != "" {
+			if allApp {
+				appPath := getAllPath()
+				bumpAllGoVersion(appPath, newVersion)
+			} else {
+				fmt.Println("Use the all flag or specified an application name")
+			}
+		} else {
+			fmt.Println("Please refer a new version or use a different flag")
 		}
 	},
 }
