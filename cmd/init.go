@@ -24,7 +24,6 @@ type Folder struct {
 
 type Config struct {
 	ServiceName string   `mapstructure:"service_name"`
-	Port        int      `mapstructure:"port"`
 	Folders     []Folder `mapstructure:"folders"`
 }
 
@@ -58,7 +57,7 @@ func generateFromStructureFile(appName string) {
 	stdout, newServiceErr := newService.Output()
 
 	if newServiceErr != nil {
-		fmt.Println(newServiceErr.Error())
+		fmt.Println("Error creating the directory:", newServiceErr.Error())
 		return
 	}
 
