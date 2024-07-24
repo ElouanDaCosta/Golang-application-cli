@@ -121,7 +121,6 @@ func readStructureFile(appType string) (Config, error) {
 		return Config{}, err
 	}
 	fmt.Println(config)
-	os.Chdir(".")
 	return config, nil
 }
 
