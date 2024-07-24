@@ -159,13 +159,14 @@ func addPackageToApp(appType string, newAppBasePath string) {
 	exec.Command("touch", "main.go").Output()
 	if appType == "gin" {
 		exec.Command("go", "get", "-u", "github.com/gin-gonic/gin@latest").Output()
-		writeGinMainGo(newAppBasePath)
+		writeMainGo(newAppBasePath, "gin")
 	}
 	if appType == "gRPC" {
 		exec.Command("go", "get", "-u", "google.golang.org/grpc").Output()
+		writeMainGo(newAppBasePath, "gRPC")
 	}
 	if appType == "basic http" {
-		writeHttpMainGo(newAppBasePath)
+		writeMainGo(newAppBasePath, "basic http")
 	}
 }
 
@@ -192,7 +193,7 @@ func writeInSaveAppFile(appName string, basePath string) {
 	f.Close()
 }
 
-func writeHttpMainGo(basePath string) {
+func writeMainGo(basePath string, appType string) {
 	os.Chdir(basePath)
 	f, err := os.OpenFile("main.go", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
@@ -200,26 +201,16 @@ func writeHttpMainGo(basePath string) {
 		return
 	}
 
-	content := fmt.Sprintf(templates.RenderHttpTemplate())
+	content := ""
 
-	_, err = f.WriteString(content)
-
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		fmt.Println("main.go generated successfully.")
+	switch appType {
+	case "gin":
+		content = fmt.Sprintf(templates.RenderGinTemplate())
+	case "gRPC":
+		content = fmt.Sprintf(templates.RenderGrpcTemplate())
+	case "basic http":
+		content = fmt.Sprintf(templates.RenderHttpTemplate())
 	}
-}
-
-func writeGinMainGo(basePath string) {
-	// Write the string to the file
-	os.Chdir(basePath)
-	f, err := os.OpenFile("main.go", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
-	if err != nil {
-		return
-	}
-
-	content := fmt.Sprintf(templates.RenderGinTemplate())
 
 	_, err = f.WriteString(content)
 
