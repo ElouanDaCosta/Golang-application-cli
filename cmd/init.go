@@ -5,11 +5,12 @@ package cmd
 
 import (
 	"fmt"
-	"go-app-cli/templates"
 	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/ElouanDaCosta/Golang-application-cli/templates"
 
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
