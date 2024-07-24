@@ -1,0 +1,5 @@
+folders:
+  - name: configs
+  - name: server
+  - name: client
+  - name: proto

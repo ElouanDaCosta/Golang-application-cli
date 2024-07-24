@@ -1,0 +1,7 @@
+folders:
+  - name: configs
+  - name: delivery
+  - name: domain
+  - name: models
+  - name: repositories
+  - name: usecases

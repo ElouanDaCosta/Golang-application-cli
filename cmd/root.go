@@ -11,10 +11,10 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Version: "0.5",
-	Use:     "microservice-cli",
-	Short:   "Generate a basic template of microservice in Golang",
-	Long:    `Generate template for microservice in Golang with the package that you want, like gin, gRPC etc.`,
+	Version: "0.9",
+	Use:     "go-app-cli",
+	Short:   "Generate a basic template of an application in Golang",
+	Long:    `Generate template for applications in Golang with the package that you want, like gin, gRPC etc.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -38,5 +38,4 @@ func init() {
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

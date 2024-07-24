@@ -16,7 +16,10 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List generated application.",
-	Long:  `List all generated application or one application by name.`,
+	Long: `List all generated application or one application by name. For example:
+go-app-cli list
+go-app-cli list --name [your_app_name]
+	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		appName, _ := cmd.Flags().GetString("name")
 
@@ -54,5 +57,5 @@ func getOneApp(appName string) {
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-	listCmd.PersistentFlags().String("name", "", "Return the app with the given name (default new_app)")
+	listCmd.PersistentFlags().String("name", "", "Return the app with the given name")
 }
