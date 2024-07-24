@@ -1,4 +1,4 @@
-module microservice-cli
+module github.com/ElouanDaCosta/Golang-application-cli
 
 go 1.22.5
 

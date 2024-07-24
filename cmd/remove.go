@@ -20,7 +20,7 @@ var removeCmd = &cobra.Command{
 	Short: "Remove an application from the storage",
 	Long: `Remove an application from the storage,
 clear completely the storage where all the application is saved 
-or remove an application with the rf flag. For example:
+or remove an application with the remove-app flag. For example:
 
 go-app-cli remove --name new_app
 go-app-cli remove --prune

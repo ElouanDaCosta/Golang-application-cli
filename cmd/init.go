@@ -6,10 +6,11 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"microservice-cli/templates"
 	"os"
 	"os/exec"
 	"path/filepath"
+
+	"github.com/ElouanDaCosta/Golang-application-cli/templates"
 
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
@@ -36,7 +37,11 @@ type promptContent struct {
 var generateCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Initialize a golang application.",
-	Long:  `Initialize a golang application using the specified technology between gin, gRPC or just basic http.`,
+	Long: `Initialize a golang application using the specified technology between gin, gRPC or just basic http. For example:
+
+go-app-cli init 
+go-app-cli init --name [your_app_name]
+	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		appName, _ := cmd.Flags().GetString("name")
 
