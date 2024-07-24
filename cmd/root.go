@@ -11,7 +11,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Version: "0.10",
+	Version: "0.11",
 	Use:     "go-app-cli",
 	Short:   "Generate a basic template of an application in Golang",
 	Long:    `Generate template for applications in Golang with the package that you want, like gin, gRPC etc.`,
