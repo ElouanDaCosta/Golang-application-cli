@@ -4,9 +4,9 @@ Copyright © 2024 Elouan DA COSTA PEIXOTO elouandacostapeixoto@gmail.com
 package cmd
 
 import (
-	"bufio"
 	"fmt"
 	"log"
+	"microservice-cli/templates"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -159,10 +159,13 @@ func addPackageToApp(appType string, newAppBasePath string) {
 	exec.Command("touch", "main.go").Output()
 	if appType == "gin" {
 		exec.Command("go", "get", "-u", "github.com/gin-gonic/gin@latest").Output()
-		writeInMainGo(newAppBasePath)
+		writeGinMainGo(newAppBasePath)
 	}
 	if appType == "gRPC" {
 		exec.Command("go", "get", "-u", "google.golang.org/grpc").Output()
+	}
+	if appType == "basic http" {
+		writeHttpMainGo(newAppBasePath)
 	}
 }
 
@@ -189,25 +192,42 @@ func writeInSaveAppFile(appName string, basePath string) {
 	f.Close()
 }
 
-func writeInMainGo(basePath string) {
+func writeHttpMainGo(basePath string) {
+	os.Chdir(basePath)
+	f, err := os.OpenFile("main.go", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	content := fmt.Sprintf(templates.RenderHttpTemplate())
+
+	_, err = f.WriteString(content)
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("main.go generated successfully.")
+	}
+}
+
+func writeGinMainGo(basePath string) {
 	// Write the string to the file
 	os.Chdir(basePath)
 	f, err := os.OpenFile("main.go", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		return
 	}
-	writer := bufio.NewWriter(f)
 
-	writer.WriteString("package main\n\n")
-	writer.WriteString(`import "github.com/gin-gonic/gin"`)
-	writer.WriteString("\n\nfunc main() {\n")
-	writer.WriteString("\tr := gin.Default()\n")
-	writer.WriteString(`  r.GET("/ping", func(c *gin.Context) {`)
-	writer.WriteString("\n\t\tc.JSON(200, gin.H{\n")
-	writer.WriteString(`      "message": "pong",`)
-	writer.WriteString("\n\t\t})\n\t})\n\tr.Run()\n}\n")
+	content := fmt.Sprintf(templates.RenderGinTemplate())
 
-	writer.Flush()
+	_, err = f.WriteString(content)
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println("main.go generated successfully.")
+	}
 }
 
 func init() {
