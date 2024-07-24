@@ -49,7 +49,6 @@ var generateCmd = &cobra.Command{
 }
 
 func generateFromStructureFile(appName string) {
-	config := readStructureFile()
 	newService := exec.Command("mkdir", appName)
 	stdout, newServiceErr := newService.Output()
 
@@ -66,14 +65,17 @@ func generateFromStructureFile(appName string) {
 
 	runGoModInit(appName)
 
-	createFolders(".", config.Folders)
-
 	appType := promptContent{
 		"Please select a package.",
 		"Which package do you want your app to be based of ?",
 	}
 
 	newAppType := askUserForPackage(appType)
+	config, configErr := readStructureFile(newAppType)
+	if configErr != nil {
+		fmt.Println(configErr)
+	}
+	createFolders(appName, config.Folders)
 	addPackageToApp(newAppType, appName)
 
 	writeInSaveAppFile(appName, "../storage")
@@ -89,6 +91,7 @@ func runGoModInit(serviceName string) {
 }
 
 func createFolders(basePath string, folders []Folder) {
+	os.Chdir(basePath)
 	for _, folder := range folders {
 		folderPath := fmt.Sprintf("%s/%s", basePath, folder.Name)
 		os.Mkdir(folder.Name, 0755)
@@ -97,19 +100,28 @@ func createFolders(basePath string, folders []Folder) {
 }
 
 // pass the structure file to the flag without the extension
-func readStructureFile() Config {
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
+func readStructureFile(appType string) (Config, error) {
+	os.Chdir("../")
+	viper.AddConfigPath("./configs")
+	switch appType {
+	case "gin":
+		viper.SetConfigName("config-gin")
+	case "gRPC":
+		viper.SetConfigName("config-grpc")
+	case "basic http":
+		viper.SetConfigName("config-http")
+	}
+
 	if err := viper.ReadInConfig(); err != nil {
-		return Config{}
+		return Config{}, err
 	}
 	var config Config
 	if err := viper.Unmarshal(&config); err != nil {
 		fmt.Println(err)
-		return Config{}
+		return Config{}, err
 	}
 	fmt.Println(config)
-	return config
+	return config, nil
 }
 
 func askUserForPackage(pc promptContent) string {
