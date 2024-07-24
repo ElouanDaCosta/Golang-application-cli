@@ -209,11 +209,11 @@ func writeMainGo(basePath string, appType string) {
 
 	switch appType {
 	case "gin":
-		content = fmt.Sprintf(templates.RenderGinTemplate())
+		content = fmt.Sprintf("%v", templates.RenderGinTemplate())
 	case "gRPC":
-		content = fmt.Sprintf(templates.RenderGrpcTemplate())
+		content = fmt.Sprintf("%v", templates.RenderGrpcTemplate())
 	case "basic http":
-		content = fmt.Sprintf(templates.RenderHttpTemplate())
+		content = fmt.Sprintf("%v", templates.RenderHttpTemplate())
 	}
 
 	_, err = f.WriteString(content)
