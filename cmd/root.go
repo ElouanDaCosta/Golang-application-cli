@@ -11,7 +11,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Version: "0.5",
+	Version: "0.9",
 	Use:     "microservice-cli",
 	Short:   "Generate a basic template of microservice in Golang",
 	Long:    `Generate template for microservice in Golang with the package that you want, like gin, gRPC etc.`,
