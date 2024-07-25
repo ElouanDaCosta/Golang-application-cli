@@ -118,6 +118,7 @@ func cleanAllStorage() {
 			panic("Couldn't replace line")
 		}
 	}
+	log.Println("Storage clean successfully")
 	f.Truncate(0)
 	f.Seek(0, 0)
 	buf.WriteTo(f)
@@ -137,6 +138,8 @@ func deleteApp(appName string) {
 		os.Remove(appName)
 		if err != nil {
 			fmt.Println(err)
+		} else {
+			log.Println("Application deleted successfully")
 		}
 	} else if char == 'n' {
 		fmt.Println("Action canceled")
