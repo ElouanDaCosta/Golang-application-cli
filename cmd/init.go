@@ -80,6 +80,7 @@ func generateFromStructureFile(appName string) {
 		fmt.Println(configErr)
 	}
 	createFolders(appName, config.Folders)
+	log.Println("Application structure created")
 	addPackageToApp(newAppType, appName)
 
 	writeInSaveAppFile(appName, "../storage")
@@ -91,6 +92,8 @@ func runGoModInit(serviceName string) {
 	cmd := exec.Command("go", "mod", "init", serviceName)
 	if err := cmd.Run(); err != nil {
 		log.Fatalf("failed to run go mod init: %v", err)
+	} else {
+		log.Println("Go application initialized")
 	}
 }
 
@@ -124,7 +127,7 @@ func readStructureFile(appType string) (Config, error) {
 		fmt.Println(err)
 		return Config{}, err
 	}
-	fmt.Println(config)
+	log.Println("Config file found")
 	return config, nil
 }
 
@@ -158,7 +161,6 @@ func askUserForPackage(pc promptContent) string {
 }
 
 func addPackageToApp(appType string, newAppBasePath string) {
-	fmt.Println("user choose :", appType)
 	os.Chdir(newAppBasePath)
 	exec.Command("touch", "main.go").Output()
 	if appType == "gin" {

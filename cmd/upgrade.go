@@ -18,15 +18,15 @@ var upgradeCmd = &cobra.Command{
 	Short: "Upgrade the go version of the specified application.",
 	Long: `Upgrade a single application go version or a specified package version or update all applications go version or package. For example:
 
-go-app-cli upgrade --name [your_app_name] --newversion [version_wanted]
+go-app-cli upgrade --name [your_app_name] --version [version_wanted]
 
-go-app-cli upgrade --newversion [version_wanted] --all
+go-app-cli upgrade --version [version_wanted] --all
 
-go-app-cli upgrade --newversion [version_wanted] -a
+go-app-cli upgrade --version [version_wanted] -a
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 		name, _ := cmd.Flags().GetString("name")
-		newVersion, _ := cmd.Flags().GetString("newversion")
+		newVersion, _ := cmd.Flags().GetString("version")
 		allApp, _ := cmd.Flags().GetBool("all")
 
 		if name != "" {
@@ -120,7 +120,7 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	upgradeCmd.PersistentFlags().String("newversion", "", "new version of the app")
+	upgradeCmd.PersistentFlags().String("version", "", "new version of the app")
 	upgradeCmd.PersistentFlags().String("name", "", "name of the application")
 	upgradeCmd.Flags().BoolP("all", "a", false, "Select all application")
 }
