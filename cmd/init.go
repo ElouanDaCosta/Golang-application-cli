@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 
 	"github.com/ElouanDaCosta/Golang-application-cli/templates"
+	"github.com/ElouanDaCosta/Golang-application-cli/utils"
 
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
@@ -54,14 +55,16 @@ go-app-cli init --name [your_app_name]
 
 func generateFromStructureFile(appName string) {
 	newService := exec.Command("mkdir", appName)
-	stdout, newServiceErr := newService.Output()
+	_, newServiceErr := newService.Output()
 
 	if newServiceErr != nil {
 		fmt.Println("Error creating the directory:", newServiceErr.Error())
 		return
 	}
 
-	fmt.Println(stdout)
+	installedPath := utils.GetInstalledPath()
+
+	currentPath := utils.GetAbsolutePath()
 
 	if err := os.Chdir(appName); err != nil {
 		log.Fatalf("unable to change directory to %s, %v", appName, err)
@@ -75,15 +78,15 @@ func generateFromStructureFile(appName string) {
 	}
 
 	newAppType := askUserForPackage(appType)
-	config, configErr := readStructureFile(newAppType)
+	config, configErr := readStructureFile(newAppType, installedPath)
 	if configErr != nil {
 		fmt.Println(configErr)
 	}
-	createFolders(appName, config.Folders)
+	createFolders(currentPath+"/"+appName, config.Folders)
 	log.Println("Application structure created")
 	addPackageToApp(newAppType, appName)
 
-	writeInSaveAppFile(appName, "../storage")
+	writeInSaveAppFile(appName, installedPath)
 
 	fmt.Printf("Microservice %s created successfully\n", appName)
 }
@@ -100,16 +103,16 @@ func runGoModInit(serviceName string) {
 func createFolders(basePath string, folders []Folder) {
 	os.Chdir(basePath)
 	for _, folder := range folders {
-		folderPath := fmt.Sprintf("%s/%s", basePath, folder.Name)
+		// folderPath := fmt.Sprintf("%s/%s", basePath, folder.Name)
 		os.Mkdir(folder.Name, 0755)
-		createFolders(folderPath, folder.Subfolders)
+		createFolders(basePath, folder.Subfolders)
 	}
 }
 
 // pass the structure file to the flag without the extension
-func readStructureFile(appType string) (Config, error) {
-	os.Chdir("../")
-	viper.AddConfigPath("./configs")
+func readStructureFile(appType string, basePath string) (Config, error) {
+	os.Chdir(basePath)
+	viper.AddConfigPath("configs")
 	switch appType {
 	case "gin":
 		viper.SetConfigName("config-gin")
@@ -177,7 +180,7 @@ func addPackageToApp(appType string, newAppBasePath string) {
 }
 
 func writeInSaveAppFile(appName string, basePath string) {
-	os.Chdir(basePath)
+	os.Chdir(basePath + "/storage")
 	f, err := os.OpenFile("app.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
