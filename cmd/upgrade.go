@@ -80,7 +80,7 @@ func bumpAllGoVersion(appPath []string, newVersion string) {
 
 func getAllPath() []string {
 	var outpout []string
-	os.Chdir("./storage")
+	os.Chdir(installedPath + "/storage")
 	f, err := os.ReadFile("app.txt")
 	if err != nil {
 		log.Println(err)
@@ -95,7 +95,7 @@ func getAllPath() []string {
 }
 
 func getAppPath(appName string) string {
-	os.Chdir("./storage")
+	os.Chdir(installedPath + "/storage")
 	f, err := os.ReadFile("app.txt")
 	if err != nil {
 		log.Println(err)
