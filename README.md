@@ -79,13 +79,13 @@ Delete completely the applications using the following command.
 Update the go version of a specific application using the following command.
 
 ```bash
-./bin/go-app-cli update --name <YOUR_APP_NAME> --newversion <YOUR_GO_VERSION>
+./bin/go-app-cli update --name <YOUR_APP_NAME> --version <YOUR_GO_VERSION>
 ```
 
 Update the go version of all the applications using the following command.
 
 ```bash
-./bin/go-app-cli update --all --newversion <YOUR_GO_VERSION>
+./bin/go-app-cli update --all --version <YOUR_GO_VERSION>
 ```
 
 ## Project Structure

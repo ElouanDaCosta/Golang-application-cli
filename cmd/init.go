@@ -8,9 +8,9 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/ElouanDaCosta/Golang-application-cli/templates"
+	"github.com/ElouanDaCosta/Golang-application-cli/utils"
 
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
@@ -24,7 +24,6 @@ type Folder struct {
 
 type Config struct {
 	ServiceName string   `mapstructure:"service_name"`
-	Port        int      `mapstructure:"port"`
 	Folders     []Folder `mapstructure:"folders"`
 }
 
@@ -55,14 +54,14 @@ go-app-cli init --name [your_app_name]
 
 func generateFromStructureFile(appName string) {
 	newService := exec.Command("mkdir", appName)
-	stdout, newServiceErr := newService.Output()
+	_, newServiceErr := newService.Output()
 
 	if newServiceErr != nil {
-		fmt.Println(newServiceErr.Error())
+		fmt.Println("Error creating the directory:", newServiceErr.Error())
 		return
 	}
 
-	fmt.Println(stdout)
+	currentPath := utils.GetAbsolutePath()
 
 	if err := os.Chdir(appName); err != nil {
 		log.Fatalf("unable to change directory to %s, %v", appName, err)
@@ -76,14 +75,15 @@ func generateFromStructureFile(appName string) {
 	}
 
 	newAppType := askUserForPackage(appType)
-	config, configErr := readStructureFile(newAppType)
+	config, configErr := readStructureFile(newAppType, installedPath)
 	if configErr != nil {
 		fmt.Println(configErr)
 	}
-	createFolders(appName, config.Folders)
+	createFolders(currentPath+"/"+appName, config.Folders)
+	log.Println("Application structure created")
 	addPackageToApp(newAppType, appName)
 
-	writeInSaveAppFile(appName, "../storage")
+	writeInSaveAppFile(appName, installedPath, currentPath)
 
 	fmt.Printf("Microservice %s created successfully\n", appName)
 }
@@ -92,22 +92,24 @@ func runGoModInit(serviceName string) {
 	cmd := exec.Command("go", "mod", "init", serviceName)
 	if err := cmd.Run(); err != nil {
 		log.Fatalf("failed to run go mod init: %v", err)
+	} else {
+		log.Println("Go application initialized")
 	}
 }
 
 func createFolders(basePath string, folders []Folder) {
 	os.Chdir(basePath)
 	for _, folder := range folders {
-		folderPath := fmt.Sprintf("%s/%s", basePath, folder.Name)
+		// folderPath := fmt.Sprintf("%s/%s", basePath, folder.Name)
 		os.Mkdir(folder.Name, 0755)
-		createFolders(folderPath, folder.Subfolders)
+		createFolders(basePath, folder.Subfolders)
 	}
 }
 
 // pass the structure file to the flag without the extension
-func readStructureFile(appType string) (Config, error) {
-	os.Chdir("../")
-	viper.AddConfigPath("./configs")
+func readStructureFile(appType string, basePath string) (Config, error) {
+	os.Chdir(basePath)
+	viper.AddConfigPath("configs")
 	switch appType {
 	case "gin":
 		viper.SetConfigName("config-gin")
@@ -125,7 +127,7 @@ func readStructureFile(appType string) (Config, error) {
 		fmt.Println(err)
 		return Config{}, err
 	}
-	fmt.Println(config)
+	log.Println("Config file found")
 	return config, nil
 }
 
@@ -159,7 +161,6 @@ func askUserForPackage(pc promptContent) string {
 }
 
 func addPackageToApp(appType string, newAppBasePath string) {
-	fmt.Println("user choose :", appType)
 	os.Chdir(newAppBasePath)
 	exec.Command("touch", "main.go").Output()
 	if appType == "gin" {
@@ -175,8 +176,8 @@ func addPackageToApp(appType string, newAppBasePath string) {
 	}
 }
 
-func writeInSaveAppFile(appName string, basePath string) {
-	os.Chdir(basePath)
+func writeInSaveAppFile(appName string, basePath string, currentPath string) {
+	os.Chdir(basePath + "/storage")
 	f, err := os.OpenFile("app.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
@@ -187,13 +188,7 @@ func writeInSaveAppFile(appName string, basePath string) {
 		log.Fatal(err)
 	}
 
-	absolutePathApp, err := filepath.Abs("../" + appName)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	f.Write([]byte("app path: " + absolutePathApp + "\n\n"))
+	f.Write([]byte("app path: " + currentPath + "/" + appName + "\n\n"))
 
 	f.Close()
 }
@@ -210,11 +205,11 @@ func writeMainGo(basePath string, appType string) {
 
 	switch appType {
 	case "gin":
-		content = fmt.Sprintf(templates.RenderGinTemplate())
+		content = fmt.Sprintf("%v", templates.RenderGinTemplate())
 	case "gRPC":
-		content = fmt.Sprintf(templates.RenderGrpcTemplate())
+		content = fmt.Sprintf("%v", templates.RenderGrpcTemplate())
 	case "basic http":
-		content = fmt.Sprintf(templates.RenderHttpTemplate())
+		content = fmt.Sprintf("%v", templates.RenderHttpTemplate())
 	}
 
 	_, err = f.WriteString(content)
