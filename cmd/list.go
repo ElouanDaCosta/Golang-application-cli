@@ -9,11 +9,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/ElouanDaCosta/Golang-application-cli/utils"
 	"github.com/spf13/cobra"
 )
-
-var installedPath = utils.GetInstalledPath()
 
 // getCmd represents the get command
 var listCmd = &cobra.Command{

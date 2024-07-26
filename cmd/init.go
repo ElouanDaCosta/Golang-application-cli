@@ -61,8 +61,6 @@ func generateFromStructureFile(appName string) {
 		return
 	}
 
-	installedPath := utils.GetInstalledPath()
-
 	currentPath := utils.GetAbsolutePath()
 
 	if err := os.Chdir(appName); err != nil {
