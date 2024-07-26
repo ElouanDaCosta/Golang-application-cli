@@ -8,7 +8,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path/filepath"
 
 	"github.com/ElouanDaCosta/Golang-application-cli/templates"
 	"github.com/ElouanDaCosta/Golang-application-cli/utils"
@@ -86,7 +85,7 @@ func generateFromStructureFile(appName string) {
 	log.Println("Application structure created")
 	addPackageToApp(newAppType, appName)
 
-	writeInSaveAppFile(appName, installedPath)
+	writeInSaveAppFile(appName, installedPath, currentPath)
 
 	fmt.Printf("Microservice %s created successfully\n", appName)
 }
@@ -179,7 +178,7 @@ func addPackageToApp(appType string, newAppBasePath string) {
 	}
 }
 
-func writeInSaveAppFile(appName string, basePath string) {
+func writeInSaveAppFile(appName string, basePath string, currentPath string) {
 	os.Chdir(basePath + "/storage")
 	f, err := os.OpenFile("app.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
@@ -191,13 +190,7 @@ func writeInSaveAppFile(appName string, basePath string) {
 		log.Fatal(err)
 	}
 
-	absolutePathApp, err := filepath.Abs("../" + appName)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	f.Write([]byte("app path: " + absolutePathApp + "\n\n"))
+	f.Write([]byte("app path: " + currentPath + "/" + appName + "\n\n"))
 
 	f.Close()
 }
