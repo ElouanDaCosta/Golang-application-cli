@@ -6,8 +6,11 @@ package cmd
 import (
 	"os"
 
+	"github.com/ElouanDaCosta/Golang-application-cli/utils"
 	"github.com/spf13/cobra"
 )
+
+var installedPath = utils.GetInstalledPath()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
