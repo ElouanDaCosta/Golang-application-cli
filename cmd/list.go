@@ -9,8 +9,11 @@ import (
 	"os"
 	"strings"
 
+	"github.com/ElouanDaCosta/Golang-application-cli/utils"
 	"github.com/spf13/cobra"
 )
+
+var installedPath = utils.GetInstalledPath()
 
 // getCmd represents the get command
 var listCmd = &cobra.Command{
@@ -32,7 +35,7 @@ go-app-cli list --name [your_app_name]
 }
 
 func listAllApp() {
-	os.Chdir("./storage")
+	os.Chdir(installedPath + "/storage")
 	f, err := os.ReadFile("app.txt")
 	if err != nil {
 		log.Println(err)
@@ -41,7 +44,7 @@ func listAllApp() {
 }
 
 func getOneApp(appName string) {
-	os.Chdir("./storage")
+	os.Chdir(installedPath + "/storage")
 	f, err := os.ReadFile("app.txt")
 	if err != nil {
 		log.Println(err)
