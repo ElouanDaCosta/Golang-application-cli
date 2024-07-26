@@ -50,7 +50,7 @@ go-app-cli prune --app --name new_app
 }
 
 func removeFromStorage(appName string) {
-	os.Chdir("./storage")
+	os.Chdir(installedPath + "/storage")
 
 	filePath := "app.txt"
 	targetLine := appName
@@ -102,7 +102,7 @@ func removeFromStorage(appName string) {
 }
 
 func cleanAllStorage() {
-	os.Chdir("./storage")
+	os.Chdir(installedPath + "/storage")
 
 	f, err := os.OpenFile("app.txt", os.O_RDWR, 0644)
 	if err != nil {
