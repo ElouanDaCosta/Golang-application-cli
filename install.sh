@@ -6,6 +6,8 @@ then
   exit 1
 fi
 
+echo export PATH="$PATH:$(go env GOPATH)/bin"
+
 echo export GAC=$(pwd) >> ~/.zshrc
 
 go build -o bin/go-app-cli
