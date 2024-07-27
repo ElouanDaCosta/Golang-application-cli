@@ -43,6 +43,10 @@ echo export GAC=$(pwd) >> ~/.zshrc
 echo export PATH="$PATH:$(go env GOPATH)/bin"
 ```
 
+```bash
+mkdir storage
+```
+
 You can build the CLI using the following command.
 Then you can run the CLI using the binary file.
 
