@@ -29,12 +29,23 @@ brew install go
 Clone the repository and run the following command at the root of the CLI.
 
 ```bash
-go install
 echo export GAC=$(pwd) >> ~/.zshrc
 ```
 
+You can build the CLI using the following command.
+Then you can run the CLI using the binary file.
+
 ```bash
 go build -o ./bin/go-app-cli
+```
+
+If you want to use the CLI from anywhere, you can add the binary to the PATH. To do this, run the following command.
+The go install command will install the binary in the $GOPATH/bin directory.
+The binary name will be the same as the directory name.
+Now you can run the CLI from anywhere.
+
+```bash
+go install
 ```
 
 ## Usage
