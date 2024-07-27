@@ -26,10 +26,11 @@ brew install go
 
 ## Installation
 
-Clone the repository and run the following command to install the CLI.
+Clone the repository and run the following command at the root of the CLI.
 
 ```bash
 go install
+echo export GAC=$(pwd) >> ~/.zshrc
 ```
 
 ```bash
