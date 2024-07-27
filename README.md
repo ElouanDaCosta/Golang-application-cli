@@ -28,8 +28,19 @@ brew install go
 
 Clone the repository and run the following command at the root of the CLI.
 
+You can execute the installation script using the following command.
+```bash
+./install.sh
+```
+
+It will execute all the process to install the CLI.
+If you do not have Golang installed on your machine, refer to the prerequisites section.
+
+If you do not want to use the installation script, you can follow the steps below to install the CLI manually.
+
 ```bash
 echo export GAC=$(pwd) >> ~/.zshrc
+echo export PATH="$PATH:$(go env GOPATH)/bin"
 ```
 
 You can build the CLI using the following command.
@@ -77,13 +88,13 @@ List a specific application using the following command.
 Delete a specific application from the storage using the following command.
 
 ```bash
-./bin/go-app-cli remove --name <YOUR_APP_NAME>
+./bin/go-app-cli prune --name <YOUR_APP_NAME>
 ```
 
 Delete completely the applications using the following command.
 
 ```bash
-./bin/go-app-cli remove --remove-app --name <YOUR_APP_NAME>
+./bin/go-app-cli prune --remove-app --name <YOUR_APP_NAME>
 ```
 
 ### Update applications
@@ -109,11 +120,14 @@ Update the go version of all the applications using the following command.
 ├── configs
 ├── storage
 ├── templates
+├── utils
 ├── .gitignore
 ├── go.mod
 ├── go.sum
+├── install.sh
 ├── main.go
 └── README.md
+
 ```
 
 1. **bin**: Contains the binary file of the CLI.
@@ -121,3 +135,4 @@ Update the go version of all the applications using the following command.
 3. **configs**: Contains the configuration files for application structure that the CLI generate.
 4. **storage**: Contains the storage files for the CLI.
 5. **templates**: Contains the templates for main.go that the CLI generate.
+6. **utils**: Contains the utility functions for the CLI.
