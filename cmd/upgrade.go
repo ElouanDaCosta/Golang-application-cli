@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -65,6 +66,13 @@ func bumpOneGoVersion(appPath string, newVersion string) {
 
 	output := strings.Join(lines, "\n")
 	err = os.WriteFile("go.mod", []byte(output), 0644)
+
+	updateDependencies := exec.Command("go", "mod", "tidy")
+	if err := updateDependencies.Run(); err != nil {
+		log.Fatalf("failed to run go mod tidy: %v", err)
+	} else {
+		log.Println("Dependencies updated")
+	}
 	if err != nil {
 		log.Fatalln(err)
 	} else {
@@ -76,6 +84,7 @@ func bumpAllGoVersion(appPath []string, newVersion string) {
 	for i := range appPath {
 		bumpOneGoVersion(appPath[i], newVersion)
 	}
+	log.Println("All go version upgraded successfully")
 }
 
 func getAllPath() []string {
