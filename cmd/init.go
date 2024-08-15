@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/ElouanDaCosta/Golang-application-cli/templates"
 	"github.com/ElouanDaCosta/Golang-application-cli/utils"
@@ -43,16 +44,21 @@ go-app-cli init --name [your_app_name]
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		appName, _ := cmd.Flags().GetString("name")
+		dockerfile, _ := cmd.Flags().GetBool("dockerfile")
 
 		if appName != "" {
-			generateFromStructureFile(appName)
+			if dockerfile {
+				generateFromStructureFile(appName, true)
+			} else {
+				generateFromStructureFile(appName, false)
+			}
 		} else {
-			generateFromStructureFile("new_app")
+			generateFromStructureFile("new_app", false)
 		}
 	},
 }
 
-func generateFromStructureFile(appName string) {
+func generateFromStructureFile(appName string, dockerfile bool) {
 	newService := exec.Command("mkdir", appName)
 	_, newServiceErr := newService.Output()
 
@@ -82,10 +88,13 @@ func generateFromStructureFile(appName string) {
 	createFolders(currentPath+"/"+appName, config.Folders)
 	log.Println("Application structure created")
 	addPackageToApp(newAppType, appName)
+	if dockerfile {
+		createDockerfile(currentPath + "/" + appName)
+	}
 
 	writeInSaveAppFile(appName, installedPath, currentPath)
 
-	fmt.Printf("Microservice %s created successfully\n", appName)
+	fmt.Printf("%s created successfully\n", appName)
 }
 
 func runGoModInit(serviceName string) {
@@ -193,6 +202,38 @@ func writeInSaveAppFile(appName string, basePath string, currentPath string) {
 	f.Close()
 }
 
+func createDockerfile(appName string) {
+	errWd := os.Chdir(appName)
+
+	if errWd != nil {
+		fmt.Println(errWd)
+	}
+
+	f, err := os.OpenFile("dockerfile", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	appVersion, err := utils.GetGoVersion(appName)
+
+	appVersionSplit := strings.Split(appVersion, " ")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var content = fmt.Sprintf("%v", templates.RenderDockerfileTemplate(appVersionSplit[1]))
+
+	_, err = f.WriteString(content)
+
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		log.Println("dockerfile generated successfully.")
+	}
+}
+
 func writeMainGo(basePath string, appType string) {
 	os.Chdir(basePath)
 	f, err := os.OpenFile("main.go", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
@@ -217,11 +258,12 @@ func writeMainGo(basePath string, appType string) {
 	if err != nil {
 		fmt.Println(err)
 	} else {
-		fmt.Println("main.go generated successfully.")
+		log.Println("main.go generated successfully.")
 	}
 }
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
 	generateCmd.PersistentFlags().String("name", "", "Generate an app with the given name (default new_app)")
+	generateCmd.Flags().BoolP("dockerfile", "d", false, "Generate a dockerfile in the new app directory")
 }

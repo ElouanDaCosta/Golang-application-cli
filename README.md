@@ -73,6 +73,14 @@ Create a new application using the following command.
 ./bin/go-app-cli init --name <YOUR_APP_NAME>
 ```
 
+You can create a dockerfile for the application using the following command.
+
+```bash
+./bin/go-app-cli init --name <YOUR_APP_NAME> --dockerfile
+```
+
+The dockerfile will be created in the root of the application and the Golang version will be the same as the application.
+
 ### List applications
 
 List all the applications using the following command.
@@ -138,5 +146,5 @@ Update the go version of all the applications using the following command.
 2. **cmd**: Contains the commands for the CLI.
 3. **configs**: Contains the configuration files for application structure that the CLI generate.
 4. **storage**: Contains the storage files for the CLI.
-5. **templates**: Contains the templates for main.go that the CLI generate.
+5. **templates**: Contains the templates for main.go and dockerfiles that the CLI generate.
 6. **utils**: Contains the utility functions for the CLI.
