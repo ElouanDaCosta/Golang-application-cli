@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 
 	"github.com/ElouanDaCosta/Golang-application-cli/templates"
 	"github.com/ElouanDaCosta/Golang-application-cli/utils"
@@ -214,7 +215,15 @@ func createDockerfile(appName string) {
 		return
 	}
 
-	var content = fmt.Sprintf("%v", templates.RenderDockerfileTemplate())
+	appVersion, err := utils.GetGoVersion(appName)
+
+	appVersionSplit := strings.Split(appVersion, " ")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var content = fmt.Sprintf("%v", templates.RenderDockerfileTemplate(appVersionSplit[1]))
 
 	_, err = f.WriteString(content)
 
