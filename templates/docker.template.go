@@ -1,7 +1,9 @@
 package templates
 
-func RenderDockerfileTemplate() string {
-	const dockerTemplate = `FROM golang:latest
+import "fmt"
+
+func RenderDockerfileTemplate(version string) string {
+	const dockerTemplate = `FROM golang:%v
 
 WORKDIR /app
 
@@ -17,5 +19,5 @@ EXPOSE 8080
 
 CMD ["/docker-gs-ping"]`
 
-	return dockerTemplate
+	return fmt.Sprintf(dockerTemplate, version)
 }

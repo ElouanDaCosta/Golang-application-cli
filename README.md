@@ -79,6 +79,8 @@ You can create a dockerfile for the application using the following command.
 ./bin/go-app-cli init --name <YOUR_APP_NAME> --dockerfile
 ```
 
+The dockerfile will be created in the root of the application and the Golang version will be the same as the application.
+
 ### List applications
 
 List all the applications using the following command.
