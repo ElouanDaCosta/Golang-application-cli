@@ -14,7 +14,7 @@ var installedPath = utils.GetInstalledPath()
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Version: "1.0.2",
+	Version: "1.1.0",
 	Use:     "go-app-cli",
 	Short:   "Generate a basic template of an application in Golang",
 	Long:    `Generate template for applications in Golang with the package that you want, like gin, gRPC etc.`,
